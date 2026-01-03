@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Serve - The Perfect Return</title>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', 'Noto Sans KR', sans-serif;
+        }
+        .tennis-yellow {
+            background-color: #CCFF00;
+            color: #1a472a;
+        }
+        .tennis-green {
+            background-color: #1a472a;
+            color: white;
+        }
+        .tennis-ball-texture {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b3e600' fill-opacity='0.4' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- FIXED IMAGE LINKS (Standard Hyphens Applied) ---
+        const LOGO_URL = "secondserve-logo.png"; 
+        const HERO_BG_URL = "tennis-court.png"; 
+
+        // Content Dictionary
+        const content = {
+            en: {
+                nav: {
+                    home: "Home",
+                    mission: "Mission",
+                    process: "How it Works",
+                    donate: "Donate",
+                    request: "Request",
+                    ace: "Ace"
+                },
+                hero: {
+                    slogan: "The Perfect Return",
+                    subSlogan: "Let's give every ball a second chance at an ace 🎾"
+                },
+                about: {
+                    title: "Who We Are",
+                    text: "We are a non-profit organization dedicated to sustainability in sports. We collect used tennis balls that have lost their bounce and give them a \"perfect return\" by donating them to animal shelters, senior centers, and charities supporting sports in underprivileged countries. Join the rally for a greener game 🌍 ♻️!"
+                },
+                process: {
+                    title: "The Perfect Return Process",
+                    step1: "Receive",
+                    step1Desc: "We collect used tennis balls from clubs, players, and tournaments.",
+                    step2: "Select, Sterilize, Organize",
+                    step2Desc: "We check the quality, clean the balls, and sort them by their next purpose.",
+                    step3: "Donate!",
+                    step3Desc: "Balls are sent to animal shelters, senior centers, and youth sports charities."
+                },
+                forms: {
+                    donateTitle: "Donate Tennis Balls",
+                    donateDesc: "Ready to recycle? Choose your form below.",
+                    requestTitle: "Request for Balls",
+                    requestDesc: "Need balls for a shelter or charity?",
+                    btnEn: "English Form",
+                    btnKo: "Korean Form"
+                },
+                ace: {
+                    title: "Ace Gallery",
+                    subtitle: "See our impact in action."
+                },
+                contact: {
+                    title: "Contact Us",
+                    phone: "Phone",
+                    email: "Email",
+                    insta: "Follow Us"
+                }
+            },
+            ko: {
+                nav: {
+                    home: "홈",
+                    mission: "소개",
+                    process: "기부 과정",
+                    donate: "기부하기",
+                    request: "요청하기",
+                    ace: "에이스"
+                },
+                hero: {
+                    slogan: "The Perfect Return",
+                    subSlogan: "모든 테니스 공이 다시 한번 '에이스'가 될 수 있도록!"
+                },
+                about: {
+                    title: "Second Serve 소개",
+                    text: "Second Serve는 스포츠의 지속 가능성을 위해 활동하는 비영리 단체입니다. 수명이 다한 테니스 공을 수거하여 유기견 보호소, 요양원, 그리고 자선 단체에 기부합니다. 모든 테니스 공이 다시 한번 '에이스'가 될 수 있도록, 여러분의 두 번째 서브를 부탁드립니다 🎾🎾! 더 친환경적인 경기를 위한 캠페인에 참여하세요 🌍 ♻️"
+                },
+                process: {
+                    title: "기부 진행 과정",
+                    step1: "수거 (Receive)",
+                    step1Desc: "전국의 테니스장, 클럽, 개인으로부터 폐테니스 공을 수거합니다.",
+                    step2: "선별 및 세척 (Select & Clean)",
+                    step2Desc: "사용 가능한 공을 분류하고 깨끗하게 세척/소독하여 용도를 정합니다.",
+                    step3: "기부 (Donate)",
+                    step3Desc: "유기견 보호소, 노인 요양 시설, 스포츠 자선 단체로 전달됩니다."
+                },
+                forms: {
+                    donateTitle: "테니스 공 기부하기",
+                    donateDesc: "환경을 지키는 서브, 지금 시작하세요.",
+                    requestTitle: "테니스 공 요청하기",
+                    requestDesc: "보호소나 단체에서 공이 필요하신가요?",
+                    btnEn: "영문 신청서",
+                    btnKo: "국문 신청서"
+                },
+                ace: {
+                    title: "에이스 (Ace)",
+                    subtitle: "우리의 활동 모습입니다."
+                },
+                contact: {
+                    title: "문의하기",
+                    phone: "전화",
+                    email: "이메일",
+                    insta: "인스타그램"
+                }
+            }
+        };
+
+        const links = {
+            donateEn: "https://docs.google.com/forms/d/e/1FAIpQLSfQVXohoNy2--3hl27yH7fJVpvKFNXuSBGdlICMNVebTz5qVg/viewform?usp=header",
+            donateKo: "https://docs.google.com/forms/d/e/1FAIpQLScj_jj6TZY9Q_6MjqEla07SUY6FwfGiNLVo1CS_TGYwui2Abg/viewform",
+            requestEn: "https://docs.google.com/forms/d/e/1FAIpQLScXTC--j4D4ZhweIhxnNfjN-KQDYOCCApBUIeRFxk62L-m1Zw/viewform?usp=header",
+            requestKo: "https://docs.google.com/forms/d/e/1FAIpQLSeSUn7_vNhckvbX8TVL_aBudXWFWdatqaWHNo0DXJ04sdcLTQ/viewform?usp=header",
+            instagram: "https://www.instagram.com/secondserve4all/"
+        };
+
+        const App = () => {
+            const [lang, setLang] = useState('en');
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const t = content[lang];
+
+            const toggleLang = () => setLang(lang === 'en' ? 'ko' : 'en');
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    {/* Navbar */}
+                    <nav className="tennis-green sticky top-0 z-50 shadow-lg">
+                        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+                            
+                            {/* LOGO SECTION */}
+                            <div className="flex items-center space-x-2">
+                                <img 
+                                    src={LOGO_URL}
+                                    alt="Second Serve Logo" 
+                                    className="w-8 h-8 object-contain bg-white rounded-full p-0.5"
+                                    onError={(e) => {
+                                        // Fallback if image fails
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                />
+                                {/* Fallback Circle if image fails loading */}
+                                <div className="hidden w-9 h-9 rounded-full bg-[#CCFF00] items-center justify-center text-xs font-bold text-green-900 border-2 border-white">
+                                    SS
+                                </div>
+                                <span className="font-bold text-xl tracking-tight">SecondServe</span>
+                            </div>
+                            
+                            {/* Desktop Nav */}
+                            <div className="hidden md:flex items-center space-x-6">
+                                <a href="#mission" className="hover:text-[#CCFF00] transition">{t.nav.mission}</a>
+                                <a href="#process" className="hover:text-[#CCFF00] transition">{t.nav.process}</a>
+                                <a href="#donate" className="hover:text-[#CCFF00] transition">{t.nav.donate}</a>
+                                <a href="#ace" className="hover:text-[#CCFF00] transition">{t.nav.ace}</a>
+                                <button 
+                                    onClick={toggleLang}
+                                    className="px-3 py-1 border border-white rounded-full hover:bg-white hover:text-green-900 transition text-sm font-semibold"
+                                >
+                                    {lang === 'en' ? '한국어' : 'English'}
+                                </button>
+                            </div>
+
+                            {/* Mobile Menu Button */}
+                            <div className="md:hidden flex items-center space-x-4">
+                                <button 
+                                    onClick={toggleLang}
+                                    className="text-sm font-semibold text-[#CCFF00]"
+                                >
+                                    {lang === 'en' ? 'KR' : 'EN'}
+                                </button>
+                                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white focus:outline-none">
+                                    <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-2xl`}></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Mobile Nav Dropdown */}
+                        {isMenuOpen && (
+                            <div className="md:hidden bg-[#143620] pb-4">
+                                <a href="#mission" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 hover:bg-green-800">{t.nav.mission}</a>
+                                <a href="#process" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 hover:bg-green-800">{t.nav.process}</a>
+                                <a href="#donate" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 hover:bg-green-800">{t.nav.donate}</a>
+                                <a href="#ace" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 hover:bg-green-800">{t.nav.ace}</a>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Hero Section */}
+                    <header 
+                        className="relative text-white py-20 lg:py-32 flex flex-col items-center justify-center text-center px-4 overflow-hidden"
+                        style={{
+                            backgroundImage: `linear-gradient(rgba(26,71,42,0.60), rgba(26,71,42,0.60)), url('${HERO_BG_URL}')`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundColor: "#1a472a"
+                        }}
+                    >
+                        {/* Decorative Tennis Elements */}
+                        <div className="absolute top-0 left-0 w-64 h-64 bg-[#CCFF00] opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+                        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#CCFF00] opacity-10 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"></div>
+
+                        <h1 className="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-lg relative z-10">
+                            {t.hero.slogan}
+                        </h1>
+                        <p className="text-lg md:text-2xl font-light max-w-2xl text-gray-200 relative z-10">
+                            {t.hero.subSlogan}
+                        </p>
+                        <div className="mt-8 relative z-10">
+                            <a href="#donate" className="bg-[#CCFF00] text-green-900 px-8 py-3 rounded-full font-bold shadow-lg hover:bg-white hover:scale-105 transition transform duration-300">
+                                {t.nav.donate} <i className="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </header>
+
+                    {/* Mission Section (Tennis Ball Shape) */}
+                    <section id="mission" className="py-20 relative overflow-hidden bg-white">
+                        <div className="container mx-auto px-4 flex justify-center">
+                            <div className="relative max-w-4xl w-full bg-[#CCFF00] rounded-3xl p-8 md:p-16 shadow-2xl tennis-ball-texture text-green-900 text-center">
+                                {/* Tennis Ball Curve Visuals */}
+                                <div className="absolute top-0 left-0 w-full h-full border-4 border-white opacity-40 rounded-3xl pointer-events-none"></div>
+                                <div className="absolute -top-10 -left-10 w-40 h-40 border-8 border-white rounded-full opacity-30"></div>
+                                <div className="absolute -bottom-10 -right-10 w-40 h-40 border-8 border-white rounded-full opacity-30"></div>
+
+                                <h2 className="text-3xl font-bold mb-6 relative z-10">{t.about.title}</h2>
+                                <p className="text-lg leading-relaxed font-medium relative z-10 whitespace-pre-line">
+                                    {t.about.text}
+                                </p>
+                                
+                                <div className="mt-8 flex justify-center space-x-6 relative z-10">
+                                    <div className="flex flex-col items-center">
+                                        <div className="bg-white p-3 rounded-full shadow-md mb-2">
+                                            <i className="fas fa-dog text-2xl text-green-700"></i>
+                                        </div>
+                                        <span className="text-xs font-bold uppercase tracking-wider">Shelters</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <div className="bg-white p-3 rounded-full shadow-md mb-2">
+                                            <i className="fas fa-wheelchair text-2xl text-green-700"></i>
+                                        </div>
+                                        <span className="text-xs font-bold uppercase tracking-wider">Seniors</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <div className="bg-white p-3 rounded-full shadow-md mb-2">
+                                            <i className="fas fa-globe-americas text-2xl text-green-700"></i>
+                                        </div>
+                                        <span className="text-xs font-bold uppercase tracking-wider">Charity</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Process Section */}
+                    <section id="process" className="py-20 bg-gray-50">
+                        <div className="container mx-auto px-4">
+                            <h2 className="text-3xl font-bold text-center mb-16 text-green-900">{t.process.title}</h2>
+                            
+                            <div className="grid md:grid-cols-3 gap-8 relative">
+                                {/* Connecting Line (Desktop) */}
+                                <div className="hidden md:block absolute top-12 left-0 w-full h-1 bg-gray-200 -z-0"></div>
+
+                                {/* Step 1 */}
+                                <div className="bg-white p-8 rounded-xl shadow-lg relative z-10 flex flex-col items-center text-center hover:transform hover:-translate-y-2 transition duration-300">
+                                    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 border-4 border-white shadow-sm">
+                                        <i className="fas fa-box-open text-4xl text-green-600"></i>
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3">{t.process.step1}</h3>
+                                    <p className="text-gray-600">{t.process.step1Desc}</p>
+                                </div>
+
+                                {/* Step 2 */}
+                                <div className="bg-white p-8 rounded-xl shadow-lg relative z-10 flex flex-col items-center text-center hover:transform hover:-translate-y-2 transition duration-300">
+                                    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 border-4 border-white shadow-sm">
+                                        <i className="fas fa-hand-sparkles text-4xl text-green-600"></i>
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3">{t.process.step2}</h3>
+                                    <p className="text-gray-600">{t.process.step2Desc}</p>
+                                </div>
+
+                                {/* Step 3 */}
+                                <div className="bg-white p-8 rounded-xl shadow-lg relative z-10 flex flex-col items-center text-center hover:transform hover:-translate-y-2 transition duration-300">
+                                    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 border-4 border-white shadow-sm">
+                                        <i className="fas fa-heart text-4xl text-red-500"></i>
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3">{t.process.step3}</h3>
+                                    <p className="text-gray-600">{t.process.step3Desc}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Forms Section */}
+                    <section id="donate" className="py-20 bg-[#1a472a] text-white">
+                        <div className="container mx-auto px-4">
+                            <div className="grid md:grid-cols-2 gap-12">
+                                {/* Donate Box */}
+                                <div className="bg-[#235c36] p-10 rounded-2xl border border-green-600 shadow-xl text-center">
+                                    <div className="mb-6">
+                                        <i className="fas fa-recycle text-5xl text-[#CCFF00]"></i>
+                                    </div>
+                                    <h3 className="text-2xl font-bold mb-4">{t.forms.donateTitle}</h3>
+                                    <p className="mb-8 text-gray-300">{t.forms.donateDesc}</p>
+                                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                                        <a href={links.donateEn} target="_blank" rel="noopener noreferrer" className="bg-white text-green-900 px-6 py-3 rounded-lg font-bold hover:bg-[#CCFF00] transition w-full sm:w-auto">
+                                            {t.forms.btnEn} <i className="fas fa-external-link-alt ml-2 text-xs"></i>
+                                        </a>
+                                        <a href={links.donateKo} target="_blank" rel="noopener noreferrer" className="bg-transparent border border-white text-white px-6 py-3 rounded-lg font-bold hover:bg-white hover:text-green-900 transition w-full sm:w-auto">
+                                            {t.forms.btnKo} <i className="fas fa-external-link-alt ml-2 text-xs"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {/* Request Box */}
+                                <div className="bg-[#235c36] p-10 rounded-2xl border border-green-600 shadow-xl text-center">
+                                    <div className="mb-6">
+                                        <i className="fas fa-hand-holding-heart text-5xl text-[#CCFF00]"></i>
+                                    </div>
+                                    <h3 className="text-2xl font-bold mb-4">{t.forms.requestTitle}</h3>
+                                    <p className="mb-8 text-gray-300">{t.forms.requestDesc}</p>
+                                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                                        <a href={links.requestEn} target="_blank" rel="noopener noreferrer" className="bg-white text-green-900 px-6 py-3 rounded-lg font-bold hover:bg-[#CCFF00] transition w-full sm:w-auto">
+                                            {t.forms.btnEn} <i className="fas fa-external-link-alt ml-2 text-xs"></i>
+                                        </a>
+                                        <a href={links.requestKo} target="_blank" rel="noopener noreferrer" className="bg-transparent border border-white text-white px-6 py-3 rounded-lg font-bold hover:bg-white hover:text-green-900 transition w-full sm:w-auto">
+                                            {t.forms.btnKo} <i className="fas fa-external-link-alt ml-2 text-xs"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Ace Section (Gallery) */}
+                    <section id="ace" className="py-20 bg-white">
+                        <div className="container mx-auto px-4 text-center">
+                            <h2 className="text-3xl font-bold mb-2 text-green-900">{t.ace.title}</h2>
+                            <p className="text-gray-600 mb-12">{t.ace.subtitle}</p>
+                            
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {/* Placeholders for photos */}
+                                {[1, 2, 3, 4].map((item) => (
+                                    <div key={item} className="aspect-square bg-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden group">
+                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition duration-300"></div>
+                                        <i className="fas fa-image text-gray-400 text-3xl group-hover:scale-110 transition duration-300"></i>
+                                    </div>
+                                ))}
+                            </div>
+                            <p className="mt-8 text-sm text-gray-500 italic">
+                                {lang === 'en' ? 'Photos coming soon!' : '사진이 곧 업데이트 될 예정입니다!'}
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-gray-900 text-gray-400 py-12">
+                        <div className="container mx-auto px-4">
+                            <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+                                <div className="mb-6 md:mb-0 text-center md:text-left">
+                                    <h4 className="text-2xl font-bold text-white mb-2">Second Serve</h4>
+                                    <p className="text-sm">The Perfect Return</p>
+                                </div>
+                                <div className="flex space-x-6">
+                                    <a href={links.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#CCFF00] transition">
+                                        <i className="fab fa-instagram text-2xl"></i>
+                                    </a>
+                                    <a href="mailto:secondserve4all@gmail.com" className="hover:text-[#CCFF00] transition">
+                                        <i className="fas fa-envelope text-2xl"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div className="border-t border-gray-800 pt-8 text-center md:text-left grid md:grid-cols-3 gap-8">
+                                <div>
+                                    <h5 className="text-white font-bold mb-4">{t.contact.title}</h5>
+                                    <p className="mb-2"><i className="fas fa-phone mr-2"></i> 010-5016-7067</p>
+                                    <p className="mb-2"><i className="fas fa-envelope mr-2"></i> secondserve4all@gmail.com</p>
+                                    <p><i className="fab fa-instagram mr-2"></i> @secondserve4all</p>
+                                </div>
+                                <div className="md:col-span-2 text-center md:text-right text-xs">
+                                    <p>&copy; {new Date().getFullYear()} Second Serve. All rights reserved.</p>
+                                    <p className="mt-2">Dedicated to a greener game.</p>
+				    <p className="mt-2">Founder Jieun Kim </p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        // Use the React 17 style render which is more robust for UMD/Browser builds
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
